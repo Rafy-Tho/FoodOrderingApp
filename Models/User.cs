@@ -20,6 +20,13 @@ public class User
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+    /// <summary>Admins can open the dashboard (menu, categories, users, orders).</summary>
+    public bool IsAdmin { get; set; }
+
+    [JsonIgnore, Ignore] public string RoleText => IsAdmin ? "Admin" : "Customer";
+
+    [JsonIgnore, Ignore] public string JoinedText => $"Joined {CreatedAt:MMM dd, yyyy}";
+
     [JsonIgnore, Ignore]
     public string FirstName
     {

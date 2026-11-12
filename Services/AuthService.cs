@@ -15,6 +15,8 @@ public static class AuthService
     private const int Iterations = 100_000;
     private const int HashSize = 32;
     private const string DatabaseSessionKey = "CurrentUserId";
+    private const string AdminEmail = "admin@foodexpress.com";
+    private const string AdminPassword = "admin123";
 
     public static User? CurrentUser { get; private set; }
     public static bool IsLoggedIn => CurrentUser is not null;
@@ -26,6 +28,8 @@ public static class AuthService
         // Always make sure there is a demo account to sign in with.
         if (Database.UserCount() == 0)
             Database.InsertUser(CreateUser("Demo User", "demo@foodexpress.com", "demo123"));
+
+        EnsureAdminAccount();
 
         string? sessionId = Database.GetSetting(DatabaseSessionKey);
         CurrentUser = string.IsNullOrWhiteSpace(sessionId)
@@ -100,7 +104,26 @@ public static class AuthService
         Database.SetSetting(DatabaseSessionKey, user.Id);
     }
 
-    private static User CreateUser(string fullName, string email, string password)
+    /// <summary>Creates the store-admin login the first time the app runs.</summary>
+    private static void EnsureAdminAccount()
+    {
+        User? admin = Database.FindUserByEmail(AdminEmail);
+
+        if (admin is null)
+        {
+            Database.InsertUser(CreateUser("Store Admin", AdminEmail, AdminPassword, isAdmin: true));
+            return;
+        }
+
+        // Upgrade a database created before the IsAdmin column existed.
+        if (!admin.IsAdmin)
+        {
+            admin.IsAdmin = true;
+            Database.InsertUser(admin);
+        }
+    }
+
+    private static User CreateUser(string fullName, string email, string password, bool isAdmin = false)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(16);
 
@@ -110,7 +133,8 @@ public static class AuthService
             FullName = fullName,
             Email = email,
             PasswordSalt = Convert.ToBase64String(salt),
-            PasswordHash = HashPassword(password, salt)
+            PasswordHash = HashPassword(password, salt),
+            IsAdmin = isAdmin
         };
     }
 

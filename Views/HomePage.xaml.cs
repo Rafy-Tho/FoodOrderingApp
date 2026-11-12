@@ -37,9 +37,21 @@ public partial class HomePage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        // The admin may have renamed or deleted the selected category while we
+        // were away, so re-resolve it by name (falls back to "All").
+        FoodCategory? selected = MenuService.Categories
+            .FirstOrDefault(c => c.Name == _selectedCategory?.Name);
+
+        _selectedCategory = selected ?? MenuService.Categories[0];
+
         UpdateCartBar();
         UpdateGreeting();
         UpdateChipVisuals();
+
+        // Pick up menu changes made in the admin dashboard.
+        RefreshFoods();
+        BindableLayout.SetItemsSource(PopularList, MenuService.GetPopularFoods());
     }
 
     private void UpdateGreeting()

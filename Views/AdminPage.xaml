@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:app="clr-namespace:FoodOrderingApp"
+             xmlns:controls="clr-namespace:FoodOrderingApp.Controls"
+             xmlns:models="clr-namespace:FoodOrderingApp.Models"
+             x:Class="FoodOrderingApp.Views.AdminPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="Android" Value="0,28,0,0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <!-- Segmented tab buttons -->
+            <Style x:Key="AdminTabButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="{StaticResource TextMain}" />
+                <Setter Property="BorderColor" Value="{StaticResource Line}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="HeightRequest" Value="38" />
+                <Setter Property="MinimumHeightRequest" Value="38" />
+                <Setter Property="Padding" Value="14,0" />
+            </Style>
+
+            <!-- One product row -->
+            <DataTemplate x:Key="AdminProductTemplate" x:DataType="models:Food">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="10">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12,12,12,12"
+                                WidthRequest="48" HeightRequest="48"
+                                VerticalOptions="Center">
+                            <Image Source="{Binding Image}" Aspect="AspectFill" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding Name}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="13.5"
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
+                            <HorizontalStackLayout Spacing="6">
+                                <Label Text="{Binding PriceText}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="12"
+                                       TextColor="{StaticResource PrimaryOrange}" />
+                                <Label Text="•" FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="{Binding Category}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <HorizontalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+                            <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                    IsVisible="{Binding IsPopular}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 10,10,10,10"
+                                    Padding="7,4"
+                                    VerticalOptions="Center">
+                                <Label Text="{x:Static app:Icons.Fire}"
+                                       FontFamily="FASolid"
+                                       FontSize="9"
+                                       TextColor="{StaticResource PrimaryOrange}" />
+                            </Border>
+                            <Button Text="{x:Static app:Icons.Pen}"
+                                    Style="{StaticResource GhostIconButton}"
+                                    TextColor="{StaticResource PrimaryOrange}"
+                                    Clicked="OnEditProductClicked" />
+                            <Button Text="{x:Static app:Icons.Trash}"
+                                    Style="{StaticResource GhostIconButton}"
+                                    Clicked="OnDeleteProductClicked" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <!-- One category row -->
+            <DataTemplate x:Key="AdminCategoryTemplate" x:DataType="models:FoodCategory">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12,12,12,12"
+                                WidthRequest="42" HeightRequest="42"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding Icon}"
+                                   FontFamily="FASolid"
+                                   FontSize="14"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding Name}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="14" />
+                            <Label Text="{Binding ItemCountText}"
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+
+                        <HorizontalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+                            <Button Text="{x:Static app:Icons.Pen}"
+                                    Style="{StaticResource GhostIconButton}"
+                                    TextColor="{StaticResource PrimaryOrange}"
+                                    Clicked="OnEditCategoryClicked" />
+                            <Button Text="{x:Static app:Icons.Trash}"
+                                    Style="{StaticResource GhostIconButton}"
+                                    Clicked="OnDeleteCategoryClicked" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <!-- One registered user row -->
+            <DataTemplate x:Key="AdminUserTemplate" x:DataType="models:User">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                Stroke="{StaticResource PrimaryOrange}"
+                                StrokeThickness="1"
+                                StrokeShape="Ellipse"
+                                WidthRequest="44" HeightRequest="44"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding Initial}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="16"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding FullName}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="13.5"
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding Email}"
+                                   FontSize="11.5"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding JoinedText}"
+                                   FontSize="10.5"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+
+                        <Border Grid.Column="2"
+                                BackgroundColor="{StaticResource OrangeSoft}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10,10,10,10"
+                                Padding="9,4"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding RoleText}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="10"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                        </Border>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <!-- One order row with the admin confirm action -->
+            <DataTemplate x:Key="AdminOrderTemplate" x:DataType="models:Order">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10" Padding="14">
+                    <VerticalStackLayout Spacing="10">
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                                <Label Text="{Binding OrderIdText}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="14.5" />
+                                <Label Text="{Binding OrderDateText}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{Binding StatusBackgroundColor}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12,12,12,12"
+                                    Padding="10,4"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding Status}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="10.5"
+                                       TextColor="{Binding StatusColor}" />
+                            </Border>
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" />
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding CustomerInfo}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="12.5" />
+                            <Label Text="{Binding DeliveryAddress}"
+                                   FontSize="11.5"
+                                   TextColor="{StaticResource TextSecondary}" />
+                            <Label Text="{Binding ItemsSummary}"
+                                   FontSize="11.5"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding PaymentMethod}"
+                                   FontSize="11.5"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding TotalText}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="16"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                        </Grid>
+
+                        <Button Text="Confirm delivered"
+                                Style="{StaticResource PrimaryButton}"
+                                HeightRequest="44"
+                                MinimumHeightRequest="44"
+                                FontSize="13"
+                                IsVisible="{Binding CanConfirm}"
+                                Clicked="OnConfirmOrderClicked" />
+                    </VerticalStackLayout>
+                </Border>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <controls:PageHeader x:Name="Header"
+                             Grid.Row="0"
+                             Title="Admin dashboard"
+                             Subtitle="Manage menu, users and orders"
+                             ShowBack="True" />
+
+        <!-- ===== Section tabs ===== -->
+        <ScrollView Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    VerticalScrollBarVisibility="Never"
+                    HeightRequest="48">
+            <HorizontalStackLayout x:Name="TabsRow"
+                                   Spacing="8"
+                                   Padding="16,2,16,8">
+                <Button x:Name="ProductsTabButton"
+                        Text="Products"
+                        Style="{StaticResource AdminTabButton}"
+                        Clicked="OnTabClicked" />
+                <Button x:Name="CategoriesTabButton"
+                        Text="Categories"
+                        Style="{StaticResource AdminTabButton}"
+                        Clicked="OnTabClicked" />
+                <Button x:Name="UsersTabButton"
+                        Text="Users"
+                        Style="{StaticResource AdminTabButton}"
+                        Clicked="OnTabClicked" />
+                <Button x:Name="OrdersTabButton"
+                        Text="Orders"
+                        Style="{StaticResource AdminTabButton}"
+                        Clicked="OnTabClicked" />
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="2">
+
+            <!-- ===================== PRODUCTS ===================== -->
+            <ScrollView x:Name="ProductsView">
+                <VerticalStackLayout Padding="16,6,16,18" Spacing="14">
+
+                    <Border x:Name="ProductFormCard" Style="{StaticResource CardStyle}" Padding="16">
+                        <VerticalStackLayout Spacing="12">
+                            <Label x:Name="ProductFormTitle"
+                                   Text="Add product"
+                                   Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="New items are saved to the local database and appear on the home page right away."
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Name" Style="{StaticResource FieldLabelStyle}" />
+                                <Border Style="{StaticResource FieldBorder}">
+                                    <Entry x:Name="ProductNameEntry"
+                                           Placeholder="e.g. Chicken Shawarma"
+                                           PlaceholderColor="{StaticResource TextSecondary}"
+                                           TextColor="{StaticResource TextMain}"
+                                           BackgroundColor="Transparent"
+                                           MaxLength="80" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Description" Style="{StaticResource FieldLabelStyle}" />
+                                <Border Style="{StaticResource FieldBorder}">
+                                    <Entry x:Name="ProductDescriptionEntry"
+                                           Placeholder="Short description shown on the menu"
+                                           PlaceholderColor="{StaticResource TextSecondary}"
+                                           TextColor="{StaticResource TextMain}"
+                                           BackgroundColor="Transparent"
+                                           MaxLength="140" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                <VerticalStackLayout Spacing="6">
+                                    <Label Text="Price ($)" Style="{StaticResource FieldLabelStyle}" />
+                                    <Border Style="{StaticResource FieldBorder}">
+                                        <Entry x:Name="ProductPriceEntry"
+                                               Placeholder="8.99"
+                                               Keyboard="Numeric"
+                                               PlaceholderColor="{StaticResource TextSecondary}"
+                                               TextColor="{StaticResource TextMain}"
+                                               BackgroundColor="Transparent"
+                                               MaxLength="8" />
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                    <Label Text="Category" Style="{StaticResource FieldLabelStyle}" />
+                                    <Border Style="{StaticResource FieldBorder}">
+                                        <Picker x:Name="ProductCategoryPicker"
+                                                Title="Choose"
+                                                TextColor="{StaticResource TextMain}"
+                                                BackgroundColor="Transparent" />
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Photo" Style="{StaticResource FieldLabelStyle}" />
+                                <Border Style="{StaticResource FieldBorder}">
+                                    <Picker x:Name="ProductImagePicker"
+                                            TextColor="{StaticResource TextMain}"
+                                            BackgroundColor="Transparent" />
+                                </Border>
+                                <Label Text="Photos ship inside the app. To use a new picture, add it to Resources\Images and rebuild."
+                                       FontSize="10.5"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                                    <Label Text="Popular" Style="{StaticResource FieldLabelStyle}" />
+                                    <Label Text="Show this item in the Popular row"
+                                           FontSize="10.5"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Switch x:Name="ProductPopularSwitch"
+                                        Grid.Column="1"
+                                        OnColor="{StaticResource PrimaryOrange}" />
+                            </Grid>
+
+                            <Label x:Name="ProductErrorLabel" Style="{StaticResource ErrorLabelStyle}" />
+
+                            <Button x:Name="ProductSaveButton"
+                                    Text="Add product"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Clicked="OnSaveProductClicked" />
+
+                            <Button x:Name="ProductCancelButton"
+                                    Text="Cancel"
+                                    Style="{StaticResource SecondaryButton}"
+                                    IsVisible="False"
+                                    Clicked="OnCancelProductEditClicked" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Menu items" Style="{StaticResource SectionTitleStyle}" />
+                        <Label x:Name="ProductCountLabel"
+                               Grid.Column="1"
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <VerticalStackLayout x:Name="ProductListLayout"
+                                         BindableLayout.ItemTemplate="{StaticResource AdminProductTemplate}" />
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- ===================== CATEGORIES ===================== -->
+            <ScrollView x:Name="CategoriesView" IsVisible="False">
+                <VerticalStackLayout Padding="16,6,16,18" Spacing="14">
+
+                    <Border x:Name="CategoryFormCard" Style="{StaticResource CardStyle}" Padding="16">
+                        <VerticalStackLayout Spacing="12">
+                            <Label x:Name="CategoryFormTitle"
+                                   Text="Add category"
+                                   Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="Categories become filter chips on the home page."
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Name" Style="{StaticResource FieldLabelStyle}" />
+                                <Border Style="{StaticResource FieldBorder}">
+                                    <Entry x:Name="CategoryNameEntry"
+                                           Placeholder="e.g. Salads"
+                                           PlaceholderColor="{StaticResource TextSecondary}"
+                                           TextColor="{StaticResource TextMain}"
+                                           BackgroundColor="Transparent"
+                                           MaxLength="40" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Icon" Style="{StaticResource FieldLabelStyle}" />
+                                <Border Style="{StaticResource FieldBorder}">
+                                    <Picker x:Name="CategoryIconPicker"
+                                            TextColor="{StaticResource TextMain}"
+                                            BackgroundColor="Transparent" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Label x:Name="CategoryErrorLabel" Style="{StaticResource ErrorLabelStyle}" />
+
+                            <Button x:Name="CategorySaveButton"
+                                    Text="Add category"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Clicked="OnSaveCategoryClicked" />
+
+                            <Button x:Name="CategoryCancelButton"
+                                    Text="Cancel"
+                                    Style="{StaticResource SecondaryButton}"
+                                    IsVisible="False"
+                                    Clicked="OnCancelCategoryEditClicked" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Categories" Style="{StaticResource SectionTitleStyle}" />
+                        <Label x:Name="CategoryCountLabel"
+                               Grid.Column="1"
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <VerticalStackLayout x:Name="CategoryListLayout"
+                                         BindableLayout.ItemTemplate="{StaticResource AdminCategoryTemplate}" />
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- ===================== USERS ===================== -->
+            <ScrollView x:Name="UsersView" IsVisible="False">
+                <VerticalStackLayout Padding="16,6,16,18" Spacing="14">
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Border Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{x:Static app:Icons.User}"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       TextColor="{StaticResource PrimaryOrange}" />
+                                <Label x:Name="UsersCountLabel"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="20" />
+                                <Label Text="Registered users"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{x:Static app:Icons.Sliders}"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       TextColor="{StaticResource PrimaryOrange}" />
+                                <Label x:Name="AdminsCountLabel"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="20" />
+                                <Label Text="Admins"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Label Text="All accounts" Style="{StaticResource SectionTitleStyle}" />
+
+                    <VerticalStackLayout x:Name="UsersListLayout"
+                                         BindableLayout.ItemTemplate="{StaticResource AdminUserTemplate}" />
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- ===================== ORDERS ===================== -->
+            <ScrollView x:Name="OrdersView" IsVisible="False">
+                <VerticalStackLayout Padding="16,6,16,18" Spacing="14">
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Border Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{x:Static app:Icons.Receipt}"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       TextColor="{StaticResource PrimaryOrange}" />
+                                <Label x:Name="OrdersCountLabel"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="20" />
+                                <Label Text="All orders"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{x:Static app:Icons.Clock}"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       TextColor="{StaticResource PrimaryOrange}" />
+                                <Label x:Name="PendingOrdersLabel"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="20" />
+                                <Label Text="Awaiting confirmation"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Border Style="{StaticResource CardStyle}" Padding="14,10">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Text="{x:Static app:Icons.Money}"
+                                   FontFamily="FASolid"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Success}"
+                                   VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                <Label x:Name="DeliveredRevenueLabel"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="18"
+                                       TextColor="{StaticResource Success}" />
+                                <Label Text="Delivered revenue"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <Label Text="Orders" Style="{StaticResource SectionTitleStyle}" />
+
+                    <VerticalStackLayout x:Name="OrdersListLayout"
+                                         BindableLayout.ItemTemplate="{StaticResource AdminOrderTemplate}" />
+                </VerticalStackLayout>
+            </ScrollView>
+
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -86,34 +86,45 @@
                     </Border>
                 </Grid>
 
-                <!-- Where the data lives -->
-                <Border Style="{StaticResource CardStyle}">
-                    <VerticalStackLayout Spacing="8">
-                        <HorizontalStackLayout Spacing="8">
+                <!-- Admin tools (only shown to admin accounts) -->
+                <Border x:Name="AdminCard"
+                        IsVisible="False"
+                        Style="{StaticResource CardStyle}"
+                        Padding="16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnAdminTapped" />
+                    </Border.GestureRecognizers>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12,12,12,12"
+                                WidthRequest="42" HeightRequest="42"
+                                VerticalOptions="Center">
                             <Label Text="{x:Static app:Icons.Sliders}"
                                    FontFamily="FASolid"
-                                   FontSize="13"
+                                   FontSize="14"
                                    TextColor="{StaticResource PrimaryOrange}"
+                                   HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                            <Label Text="Your data"
-                                   Style="{StaticResource SectionTitleStyle}" />
-                        </HorizontalStackLayout>
-
-                        <Label Text="The menu, your account, cart and orders are stored in a SQLite database on this device. Edit Data\FoodExpressDb\foods.json and rebuild to change the menu."
-                               FontSize="11.5"
-                               TextColor="{StaticResource TextSecondary}" />
-
-                        <Border BackgroundColor="#FCF8F4"
-                                Stroke="{StaticResource Line}"
-                                StrokeThickness="1"
-                                StrokeShape="RoundRectangle 12,12,12,12"
-                                Padding="10,8">
-                            <Label x:Name="DataPathLabel"
-                                   FontSize="10"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   LineBreakMode="CharacterWrap" />
                         </Border>
-                    </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Admin dashboard"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="15" />
+                            <Label Text="Add products, categories, users and orders"
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+
+                        <Label Grid.Column="2"
+                               Text="{x:Static app:Icons.ChevronRight}"
+                               FontFamily="FASolid"
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}"
+                               VerticalOptions="Center" />
+                    </Grid>
                 </Border>
 
                 <Button Text="Sign out"

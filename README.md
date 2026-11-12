@@ -77,8 +77,20 @@ network calls. The "backend" is a single SQLite file on the device.
 ### Account
 - Profile page with avatar initial, full name and email.
 - Live counters: number of orders and items in the cart.
-- Shows the exact path of the SQLite database file on the current device.
+- Admin accounts get an **Admin dashboard** shortcut (see below).
 - Sign out (cart and orders stay saved for the next sign-in).
+
+### Admin dashboard
+- Only visible to accounts with `User.IsAdmin`.
+- **Products**: add a dish (name, description, price, category, photo, popular),
+  edit any existing dish (the form re-opens pre-filled) or remove dishes from
+  the menu.
+- **Categories**: add, rename (with a new icon) or delete filter chips, and see
+  how many items each category holds. Renaming a category moves its dishes with
+  it; deleting a category also removes its dishes.
+- **Users**: browse every registered account with role and joined date.
+- **Orders**: see all customers' orders, confirm a pending order as **Delivered**
+  and watch pending count / delivered revenue update.
 
 ---
 
@@ -92,7 +104,8 @@ network calls. The "backend" is a single SQLite file on the device.
 | Cart | `Views/CartPage.xaml` | Line items, quantity +/−, remove, clear, totals, checkout button |
 | Checkout | `Views/CheckoutPage.xaml` | Delivery details, payment method, order summary, place order |
 | Order history | `Views/OrderHistoryPage.xaml` | Order list, status, totals, cancel/delete |
-| Account | `Views/AccountPage.xaml` | Profile, stats, database path, sign out |
+| Account | `Views/AccountPage.xaml` | Profile, stats, admin dashboard link, sign out |
+| Admin dashboard | `Views/AdminPage.xaml` | Add products/categories, view users, confirm orders |
 
 Navigation is a plain `NavigationPage` (push/pop). Signing in or out swaps the
 window's root page rather than navigating.
@@ -559,6 +572,16 @@ Consequences:
 Email:    demo@foodexpress.com
 Password: demo123
 ```
+
+- A store-admin account is created on first run (and restored if missing):
+
+```
+Email:    admin@foodexpress.com
+Password: admin123
+```
+
+Admins have `User.IsAdmin = true`, which reveals the Admin dashboard on the
+account page. The dashboard is guarded in `AdminPage.OnAppearing()`.
 
 This is a local demo app: there is no server, token, or transport security to
 consider. The hash protects the password if someone opens the `.db3` file.

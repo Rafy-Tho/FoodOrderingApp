@@ -25,6 +25,12 @@ public class FoodCategory
     /// </summary>
     public string IconKey { get; set; } = "utensils";
 
+    /// <summary>How many menu items use this category (admin dashboard only).</summary>
+    [JsonIgnore, Ignore]
+    public int ItemCount { get; set; }
+
+    [JsonIgnore, Ignore] public string ItemCountText => ItemCount == 1 ? "1 item" : $"{ItemCount} items";
+
     [JsonIgnore, Ignore]
     public string Icon => CategoryIcons.Resolve(IconKey);
 }

@@ -28,6 +28,7 @@ public static class Icons
     public const string Close = "\uf00d";
     public const string Check = "\uf00c";
     public const string CheckCircle = "\uf058";
+    public const string Pen = "\uf304";
     public const string Sliders = "\uf1de";
 
     // Account / forms

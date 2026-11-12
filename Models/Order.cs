@@ -52,6 +52,9 @@ public class Order : INotifyPropertyChanged
     /// <summary>Only pending orders can be cancelled.</summary>
     [JsonIgnore, Ignore] public bool CanCancel => Status == "Pending";
 
+    /// <summary>Admins confirm pending orders once they are handed over / delivered.</summary>
+    [JsonIgnore, Ignore] public bool CanConfirm => Status == "Pending";
+
     // Status badge colors (text color and soft background color)
     [JsonIgnore, Ignore]
     public Color StatusColor => Status switch
@@ -78,6 +81,7 @@ public class Order : INotifyPropertyChanged
         OnPropertyChanged(nameof(StatusColor));
         OnPropertyChanged(nameof(StatusBackgroundColor));
         OnPropertyChanged(nameof(CanCancel));
+        OnPropertyChanged(nameof(CanConfirm));
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>

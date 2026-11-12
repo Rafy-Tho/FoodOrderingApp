@@ -22,7 +22,13 @@ public partial class AccountPage : ContentPage
 
         OrdersCountLabel.Text = OrderService.Orders.Count.ToString();
         CartCountLabel.Text = CartService.GetCartItemCount().ToString();
-        DataPathLabel.Text = Database.DatabasePath;
+
+        AdminCard.IsVisible = user?.IsAdmin == true;
+    }
+
+    private async void OnAdminTapped(object? sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new AdminPage());
     }
 
     private async void OnSignOutClicked(object? sender, EventArgs e)

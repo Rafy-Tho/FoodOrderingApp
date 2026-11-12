@@ -98,6 +98,21 @@ public static class Database
 
     // ---------- Startup ----------
 
+    /// <summary>
+    /// Databases created before the admin dashboard existed have no IsAdmin
+    /// column. CreateTable normally adds it, but make that explicit so an old
+    /// .db3 file can never break sign-in.
+    /// </summary>
+    private static void EnsureUserAdminColumn(SQLiteConnection connection)
+    {
+        List<TableColumn> columns = connection.Query<TableColumn>("PRAGMA table_info(\"User\")");
+
+        bool hasColumn = columns.Any(c => string.Equals(c.Name, "IsAdmin", StringComparison.OrdinalIgnoreCase));
+
+        if (!hasColumn)
+            connection.Execute("ALTER TABLE \"User\" ADD COLUMN IsAdmin INTEGER NOT NULL DEFAULT 0");
+    }
+
     public static void Initialize()
     {
         lock (Gate)
@@ -111,6 +126,7 @@ public static class Database
             SQLiteConnection connection = Connection;
 
             connection.CreateTable<User>();
+            EnsureUserAdminColumn(connection);
             connection.CreateTable<Food>();
             connection.CreateTable<FoodCategory>();
             connection.CreateTable<CartLine>();
@@ -237,6 +253,20 @@ public static class Database
             return Connection.Table<FoodCategory>().ToList();
     }
 
+    public static void SaveCategories(IEnumerable<FoodCategory> categories)
+    {
+        lock (Gate)
+        {
+            List<FoodCategory> list = categories.ToList();
+
+            Connection.RunInTransaction(() =>
+            {
+                Connection.DeleteAll<FoodCategory>();
+                Connection.InsertAll(list);
+            });
+        }
+    }
+
     public static void SaveFoods(IEnumerable<Food> foods)
     {
         lock (Gate)
@@ -257,6 +287,15 @@ public static class Database
     {
         lock (Gate)
             return Connection.Table<User>().Count();
+    }
+
+    /// <summary>Every registered account, oldest first (admin dashboard).</summary>
+    public static List<User> GetUsers()
+    {
+        lock (Gate)
+            return Connection.Table<User>()
+                             .OrderBy(u => u.CreatedAt)
+                             .ToList();
     }
 
     public static User? FindUser(string id)
@@ -318,24 +357,44 @@ public static class Database
         lock (Gate)
         {
             List<Order> orders = Connection.Table<Order>().Where(o => o.UserId == userId).ToList();
-            if (orders.Count == 0)
-                return orders;
-
-            Dictionary<int, List<OrderItem>> items = Connection.Table<OrderItem>()
-                .ToList()
-                .GroupBy(i => i.OrderId)
-                .ToDictionary(g => g.Key, g => g.ToList());
-
-            foreach (Order order in orders)
-                order.Items = items.TryGetValue(order.Id, out List<OrderItem>? list)
-                    ? list
-                    : new List<OrderItem>();
+            AttachItems(orders);
 
             return orders
                 .OrderByDescending(o => o.OrderDate)
                 .ThenByDescending(o => o.Id)
                 .ToList();
         }
+    }
+
+    /// <summary>Every order from every customer (admin dashboard).</summary>
+    public static List<Order> GetAllOrders()
+    {
+        lock (Gate)
+        {
+            List<Order> orders = Connection.Table<Order>().ToList();
+            AttachItems(orders);
+
+            return orders
+                .OrderByDescending(o => o.OrderDate)
+                .ThenByDescending(o => o.Id)
+                .ToList();
+        }
+    }
+
+    /// <summary>Fills each order's Items list from the OrderItem table.</summary>
+    private static void AttachItems(List<Order> orders)
+    {
+        if (orders.Count == 0) return;
+
+        Dictionary<int, List<OrderItem>> items = Connection.Table<OrderItem>()
+            .ToList()
+            .GroupBy(i => i.OrderId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        foreach (Order order in orders)
+            order.Items = items.TryGetValue(order.Id, out List<OrderItem>? list)
+                ? list
+                : new List<OrderItem>();
     }
 
     public static void InsertOrder(Order order)
@@ -483,5 +542,12 @@ public static class Database
     private sealed class SessionFile
     {
         public string? UserId { get; set; }
+    }
+
+    /// <summary>One row of PRAGMA table_info(...).</summary>
+    private sealed class TableColumn
+    {
+        [Column("name")]
+        public string Name { get; set; } = string.Empty;
     }
 }

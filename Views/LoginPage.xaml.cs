@@ -30,6 +30,13 @@ public partial class LoginPage : ContentPage
         HideError();
     }
 
+    private void OnUseAdminTapped(object? sender, TappedEventArgs e)
+    {
+        EmailEntry.Text = "admin@foodexpress.com";
+        PasswordEntry.Text = "admin123";
+        HideError();
+    }
+
     private async void OnRegisterTapped(object? sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new RegisterPage());

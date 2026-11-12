@@ -143,6 +143,26 @@
                                    TextColor="{StaticResource TextSecondary}" />
                         </VerticalStackLayout>
                     </Border>
+
+                    <!-- Admin account shortcut -->
+                    <Border BackgroundColor="{StaticResource SuccessSoft}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14,14,14,14"
+                            Padding="12,10">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnUseAdminTapped" />
+                        </Border.GestureRecognizers>
+
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Sign in as store admin"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Success}" />
+                            <Label Text="admin@foodexpress.com · admin123  (tap to fill in)"
+                                   FontSize="10.5"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
                 </VerticalStackLayout>
             </Border>
 
