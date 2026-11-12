@@ -1,0 +1,67 @@
+FoodExpress - third-party asset credits
+=======================================
+
+Food photography
+----------------
+All photos are real photographs downloaded from Wikimedia Commons and bundled in
+Resources/Images. Licenses are as stated on each file page.
+
+food_cheeseburger.jpg - "Cheeseburger and fries 2" by Kurtkaiser - CC0
+https://commons.wikimedia.org/wiki/File:Cheeseburger_and_fries_2.jpg
+
+food_double_burger.jpg - "Double cheeseburger, with Jarlsberg and guacamole on
+homemade bread - Massachusetts" by Daderot - CC0
+https://commons.wikimedia.org/wiki/File:Double_cheeseburger,_with_Jarlsberg_and_guacamole_on_homemade_bread_-_Massachusetts.jpg
+
+food_chicken_burger.jpg - "Fried chicken burger" by Kurt Kaiser - CC0
+https://commons.wikimedia.org/wiki/File:Fried_chicken_burger_.jpg
+
+food_margherita.jpg - "Margherita pizza on plate" by Shisma - CC BY 4.0
+https://commons.wikimedia.org/wiki/File:Margherita_pizza_on_plate.jpg
+
+food_pepperoni.jpg - "Pepperoni pizza slice on a red plate" by MVS9966 - CC BY 3.0
+https://commons.wikimedia.org/wiki/File:Pepperoni_pizza_slice_on_a_red_plate.jpg
+
+food_veggie_pizza.jpg - "Vegetarian-pizza-close-up" by MartinThoma - CC0
+https://commons.wikimedia.org/wiki/File:Vegetarian-pizza-close-up.jpg
+
+food_fried_rice.jpg - "Chicken fried rice - Stir Fry by CK 2023-12-02" by Andy Li - CC0
+https://commons.wikimedia.org/wiki/File:Chicken_fried_rice_-_Stir_Fry_by_CK_2023-12-02.jpg
+
+food_beef_noodles.jpg - "Beef Stir-fried Noodles - Frank's Noodle House" by
+TurquoiseGoose - CC BY-SA 4.0
+https://commons.wikimedia.org/wiki/File:Beef_Stir-fried_Noodles_-_Frank%27s_Noodle_House.jpg
+
+food_salmon_sushi.jpg - "Salmon nigiri sushi" by Alpha (Melbourne, Australia) - CC BY-SA 2.0
+https://commons.wikimedia.org/wiki/File:Salmon_nigiri_sushi.jpg
+
+food_lemon_tea.jpg - "Iced Lemon Tea - MOGUMOGU 2024-08-16" by Andy Li - CC0
+https://commons.wikimedia.org/wiki/File:Iced_Lemon_Tea_-_MOGUMOGU_2024-08-16.jpg
+
+food_orange_juice.jpg - "Orange juice 1 edit1" by USDA / edited by Arad - Public domain
+https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg
+
+food_milkshake.jpg - "Vegan milkshake at Toothsome Chocolate Emporium" by
+Mx. Granger - CC0
+https://commons.wikimedia.org/wiki/File:Vegan_milkshake_at_Toothsome_Chocolate_Emporium.jpg
+
+food_lava_cake.jpg - "Chocolate lava cake" by sanctumsolitude - CC BY 2.0
+https://commons.wikimedia.org/wiki/File:Chocolate_lava_cake.jpg
+
+food_ice_cream.jpg - "Bowl ~ Ice cream" by Mitchellhobbs - CC BY-SA 4.0
+https://commons.wikimedia.org/wiki/File:Bowl_~_Ice_cream.jpg
+
+hero_pizza.jpg - "Pizza-napoletana" by Fabryx98 - CC BY-SA 4.0
+https://commons.wikimedia.org/wiki/File:Pizza-napoletana.jpg
+
+Icons
+-----
+Font Awesome Free 6.7.2 - https://fontawesome.com
+Icons: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+Fonts: SIL OFL 1.1 - https://scripts.sil.org/OFL
+Font file bundled: Resources/Fonts/fa-solid-900.ttf
+
+Logo and app icon
+-----------------
+Designed for this project (SVG in Resources/AppIcon, Resources/Images/logo.svg
+and Resources/Splash).

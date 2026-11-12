@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FoodOrderingApp.Models"
+             xmlns:app="clr-namespace:FoodOrderingApp"
+             xmlns:controls="clr-namespace:FoodOrderingApp.Controls"
+             x:Class="FoodOrderingApp.Views.HomePage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="Android" Value="0,28,0,0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <!-- Category chip: icon + label. Selected colours are applied in code-behind. -->
+            <DataTemplate x:Key="CategoryChipTemplate" x:DataType="models:FoodCategory">
+                <Border x:Name="Chip"
+                        BackgroundColor="White"
+                        Stroke="{StaticResource Line}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 22,22,22,22"
+                        Padding="14,8"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCategoryChipTapped"
+                                              CommandParameter="{Binding .}" />
+                    </Border.GestureRecognizers>
+
+                    <HorizontalStackLayout Spacing="6">
+                        <Label x:Name="ChipIcon"
+                               Text="{Binding Icon}"
+                               FontFamily="FASolid"
+                               FontSize="12"
+                               TextColor="{StaticResource PrimaryOrange}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="ChipLabel"
+                               Text="{Binding Name}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="13"
+                               TextColor="{StaticResource TextMain}"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+            </DataTemplate>
+
+            <!-- Popular food card (horizontal carousel) -->
+            <DataTemplate x:Key="PopularFoodTemplate" x:DataType="models:Food">
+                <Border Style="{StaticResource CardStyle}" WidthRequest="172" Padding="10">
+                    <VerticalStackLayout Spacing="8">
+                        <Border StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16,16,16,16"
+                                HeightRequest="96"
+                                BackgroundColor="{StaticResource OrangeSoft}">
+                            <Image Source="{Binding Image}" Aspect="AspectFill" />
+                        </Border>
+
+                        <Label Text="{Binding Name}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="14"
+                               TextColor="{StaticResource TextMain}"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding PriceText}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="15"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="{x:Static app:Icons.Plus}"
+                                    Style="{StaticResource AddIconButton}"
+                                    Clicked="OnAddToCartClicked" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </DataTemplate>
+
+            <!-- Food row (vertical "All food" list) -->
+            <DataTemplate x:Key="FoodRowTemplate" x:DataType="models:Food">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10" Padding="10">
+                    <Grid ColumnDefinitions="78,*,Auto" ColumnSpacing="12">
+
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16,16,16,16"
+                                WidthRequest="78" HeightRequest="78">
+                            <Image Source="{Binding Image}" Aspect="AspectFill" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                            <Label Text="{Binding Name}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="15"
+                                   TextColor="{StaticResource TextMain}"
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding Description}"
+                                   FontSize="11.5"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   MaxLines="2"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding PriceText}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="15"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                        </VerticalStackLayout>
+
+                        <Button Grid.Column="2"
+                                Text="{x:Static app:Icons.Plus}"
+                                Style="{StaticResource AddIconButton}"
+                                VerticalOptions="Center"
+                                Clicked="OnAddToCartClicked" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ===== Branded top bar ===== -->
+        <controls:PageHeader x:Name="Header"
+                             Grid.Row="0"
+                             Title="FoodExpress"
+                             Subtitle="Deliver to · Home"
+                             ShowBack="False"
+                             ShowLogo="True"
+                             ShowProfile="True"
+                             ShowAction="True"
+                             ActionIcon="{x:Static app:Icons.Cart}"
+                             SecondaryActionIcon="{x:Static app:Icons.Receipt}"
+                             ActionClicked="OnCartClicked"
+                             SecondaryActionClicked="OnOrdersClicked"
+                             ProfileClicked="OnProfileClicked" />
+
+        <!--
+            The whole page is a normal ScrollView with a BindableLayout for the
+            food list. Nothing here is recreated when the search results change,
+            so the search box keeps focus and the cursor while you type.
+        -->
+        <ScrollView x:Name="MainScrollView" Grid.Row="1">
+            <VerticalStackLayout Padding="16,6,16,10" Spacing="16">
+
+                <!-- Hero banner with a real pizza photo -->
+                <Border StrokeThickness="0"
+                        StrokeShape="RoundRectangle 24,24,24,24"
+                        Padding="18,18,14,18"
+                        HeightRequest="180">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="{StaticResource PrimaryOrange}" Offset="0.0" />
+                            <GradientStop Color="{StaticResource OrangeDeep}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <Grid ColumnDefinitions="*,110" ColumnSpacing="8">
+                        <VerticalStackLayout Spacing="8" VerticalOptions="Center">
+
+                            <Border BackgroundColor="#33FFFFFF"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12,12,12,12"
+                                    Padding="10,5"
+                                    HorizontalOptions="Start">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="{x:Static app:Icons.TruckFast}"
+                                           FontFamily="FASolid"
+                                           FontSize="10"
+                                           TextColor="White"
+                                           VerticalOptions="Center" />
+                                    <Label Text="Free delivery over $20"
+                                           FontSize="10.5"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="White" />
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <Label Text="Hot &amp; fresh food,&#10;delivered fast"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="21"
+                                   LineHeight="1.15"
+                                   TextColor="White" />
+
+                            <Label Text="Order from your favourite local kitchens"
+                                   FontSize="11.5"
+                                   TextColor="#FFE7DC"
+                                   MaxLines="2" />
+                        </VerticalStackLayout>
+
+                        <Border Grid.Column="1"
+                                StrokeThickness="0"
+                                StrokeShape="Ellipse"
+                                WidthRequest="110"
+                                HeightRequest="110"
+                                VerticalOptions="Center"
+                                BackgroundColor="#33FFFFFF">
+                            <Image Source="hero_pizza.jpg" Aspect="AspectFill" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Search -->
+                <Border Style="{StaticResource CardStyle}" Padding="14,0">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Text="{x:Static app:Icons.Search}"
+                               FontFamily="FASolid"
+                               FontSize="14"
+                               TextColor="{StaticResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Entry x:Name="SearchEntry"
+                               Grid.Column="1"
+                               Placeholder="Search for pizza, burgers, drinks..."
+                               PlaceholderColor="{StaticResource TextSecondary}"
+                               TextColor="{StaticResource TextMain}"
+                               BackgroundColor="Transparent"
+                               FontSize="14"
+                               HeightRequest="48"
+                               ReturnType="Search"
+                               ClearButtonVisibility="WhileEditing"
+                               TextChanged="OnSearchTextChanged"
+                               Completed="OnSearchCompleted" />
+                    </Grid>
+                </Border>
+
+                <!-- Categories -->
+                <Label Text="Categories" Style="{StaticResource SectionTitleStyle}" />
+                <ScrollView Orientation="Horizontal"
+                            HorizontalScrollBarVisibility="Never"
+                            VerticalScrollBarVisibility="Never"
+                            HeightRequest="44">
+                    <HorizontalStackLayout x:Name="CategoryChips"
+                                           Spacing="8"
+                                           Padding="0,2,0,4"
+                                           BindableLayout.ItemTemplate="{StaticResource CategoryChipTemplate}" />
+                </ScrollView>
+
+                <!-- Popular food (hidden while searching or filtering) -->
+                <VerticalStackLayout x:Name="PopularSection" Spacing="12">
+                    <HorizontalStackLayout Spacing="7">
+                        <Label Text="{x:Static app:Icons.Fire}"
+                               FontFamily="FASolid"
+                               FontSize="14"
+                               TextColor="{StaticResource PrimaryOrange}"
+                               VerticalOptions="Center" />
+                        <Label Text="Popular right now" Style="{StaticResource SectionTitleStyle}" />
+                    </HorizontalStackLayout>
+
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                VerticalScrollBarVisibility="Never"
+                                HeightRequest="194">
+                        <HorizontalStackLayout x:Name="PopularList"
+                                               Spacing="12"
+                                               BindableLayout.ItemTemplate="{StaticResource PopularFoodTemplate}" />
+                    </ScrollView>
+                </VerticalStackLayout>
+
+                <!-- Title of the main list -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label x:Name="AllFoodTitleLabel" Text="All food"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Label x:Name="AllFoodCountLabel" Grid.Column="1"
+                           FontSize="12" VerticalOptions="Center"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Grid>
+
+                <!-- Shown when search/filter finds nothing -->
+                <Border x:Name="NoResultsLabel"
+                        IsVisible="False"
+                        Style="{StaticResource CardStyle}"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="{x:Static app:Icons.Search}"
+                               FontFamily="FASolid"
+                               FontSize="26"
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                        <Label Text="No food found"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="15"
+                               HorizontalOptions="Center" />
+                        <Label Text="Try a different search word or category."
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Food list (BindableLayout updates in place, never rebuilt by the search box) -->
+                <VerticalStackLayout x:Name="FoodListLayout"
+                                     BindableLayout.ItemTemplate="{StaticResource FoodRowTemplate}" />
+
+                <BoxView HeightRequest="4" Color="Transparent" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- "Added to cart" toast -->
+        <Border x:Name="ToastBorder"
+                Grid.Row="1"
+                IsVisible="False"
+                Opacity="0"
+                BackgroundColor="{StaticResource TextMain}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 20,20,20,20"
+                Padding="18,10"
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Margin="16,0,16,14">
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="{x:Static app:Icons.CheckCircle}"
+                       FontFamily="FASolid"
+                       FontSize="12"
+                       TextColor="#7BE0B5"
+                       VerticalOptions="Center" />
+                <Label x:Name="ToastLabel" TextColor="White" FontSize="13" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- Floating cart bar (visible only when the cart has items) -->
+        <Border x:Name="CartBar"
+                Grid.Row="2"
+                IsVisible="False"
+                BackgroundColor="{StaticResource TextMain}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 22,22,22,22"
+                Padding="12,12"
+                Margin="16,6,16,14">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCartBarTapped" />
+            </Border.GestureRecognizers>
+
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                <Border BackgroundColor="{StaticResource PrimaryOrange}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14,14,14,14"
+                        WidthRequest="42" HeightRequest="42">
+                    <Label Text="{x:Static app:Icons.Cart}"
+                           FontFamily="FASolid"
+                           FontSize="15"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                    <Label x:Name="CartCountLabel"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="14"
+                           TextColor="White" />
+                    <Label Text="Tap to view your cart"
+                           FontSize="10.5"
+                           TextColor="#AEB6C2" />
+                </VerticalStackLayout>
+
+                <Label x:Name="CartTotalLabel"
+                       Grid.Column="2"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="16"
+                       TextColor="White"
+                       VerticalOptions="Center" />
+
+                <Label Grid.Column="3"
+                       Text="{x:Static app:Icons.ChevronRight}"
+                       FontFamily="FASolid"
+                       FontSize="12"
+                       TextColor="#AEB6C2"
+                       VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</ContentPage>

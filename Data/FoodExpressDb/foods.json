@@ -1,0 +1,137 @@
+[
+    {
+        "id":  1,
+        "name":  "Classic Cheeseburger",
+        "description":  "Juicy beef patty, cheddar, lettuce and tomato",
+        "price":  5.99,
+        "category":  "Burgers",
+        "image":  "food_cheeseburger.jpg",
+        "isPopular":  true
+    },
+    {
+        "id":  2,
+        "name":  "Double Beef Burger",
+        "description":  "Two beef patties with special house sauce",
+        "price":  7.99,
+        "category":  "Burgers",
+        "image":  "food_double_burger.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  3,
+        "name":  "Crispy Chicken Burger",
+        "description":  "Golden fried chicken with creamy mayo",
+        "price":  6.49,
+        "category":  "Burgers",
+        "image":  "food_chicken_burger.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  4,
+        "name":  "Margherita Pizza",
+        "description":  "Tomato sauce, fresh mozzarella and basil",
+        "price":  8.99,
+        "category":  "Pizza",
+        "image":  "food_margherita.jpg",
+        "isPopular":  true
+    },
+    {
+        "id":  5,
+        "name":  "Pepperoni Pizza",
+        "description":  "Loaded with spicy pepperoni and cheese",
+        "price":  9.99,
+        "category":  "Pizza",
+        "image":  "food_pepperoni.jpg",
+        "isPopular":  true
+    },
+    {
+        "id":  6,
+        "name":  "Veggie Supreme Pizza",
+        "description":  "Mushrooms, peppers, olives and onions",
+        "price":  9.49,
+        "category":  "Pizza",
+        "image":  "food_veggie_pizza.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  7,
+        "name":  "Chicken Fried Rice",
+        "description":  "Wok-fried rice with chicken and vegetables",
+        "price":  5.49,
+        "category":  "Asian",
+        "image":  "food_fried_rice.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  8,
+        "name":  "Beef Noodle Stir Fry",
+        "description":  "Savory noodles with tender beef strips",
+        "price":  6.49,
+        "category":  "Asian",
+        "image":  "food_beef_noodles.jpg",
+        "isPopular":  true
+    },
+    {
+        "id":  9,
+        "name":  "Salmon Sushi Set",
+        "description":  "8 pieces of fresh salmon nigiri",
+        "price":  11.99,
+        "category":  "Asian",
+        "image":  "food_salmon_sushi.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  10,
+        "name":  "Iced Lemon Tea",
+        "description":  "Refreshing black tea with fresh lemon",
+        "price":  2.49,
+        "category":  "Drinks",
+        "image":  "food_lemon_tea.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  11,
+        "name":  "Fresh Orange Juice",
+        "description":  "100% squeezed oranges, no sugar added",
+        "price":  2.99,
+        "category":  "Drinks",
+        "image":  "food_orange_juice.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  12,
+        "name":  "Chocolate Milkshake",
+        "description":  "Thick, creamy and topped with whipped cream",
+        "price":  3.99,
+        "category":  "Drinks",
+        "image":  "food_milkshake.jpg",
+        "isPopular":  true
+    },
+    {
+        "id":  13,
+        "name":  "Chocolate Lava Cake",
+        "description":  "Warm cake with a molten chocolate center",
+        "price":  4.99,
+        "category":  "Desserts",
+        "image":  "food_lava_cake.jpg",
+        "isPopular":  true
+    },
+    {
+        "id":  14,
+        "name":  "Vanilla Ice Cream",
+        "description":  "Three scoops of creamy vanilla",
+        "price":  3.49,
+        "category":  "Desserts",
+        "image":  "food_ice_cream.jpg",
+        "isPopular":  false
+    },
+    {
+        "id":  15,
+        "name":  "BBQ Bacon Burger",
+        "description":  "Smoky BBQ sauce, crispy bacon and onion rings",
+        "price":  7.49,
+        "category":  "Burgers",
+        "image":  "food_double_burger.jpg",
+        "isPopular":  true
+    }
+]

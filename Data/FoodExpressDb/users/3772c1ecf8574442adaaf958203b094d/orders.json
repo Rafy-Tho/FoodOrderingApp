@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1001,
+    "userId": "3772c1ecf8574442adaaf958203b094d",
+    "customerName": "Demo User",
+    "phoneNumber": "0987654321",
+    "deliveryAddress": "88 Sunset Road, Green Park, Demo City",
+    "paymentMethod": "Cash on Delivery",
+    "items": [
+      {
+        "foodName": "Classic Cheeseburger",
+        "image": "food_cheeseburger.jpg",
+        "unitPrice": 5.99,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 5.99,
+    "deliveryFee": 2.50,
+    "total": 8.49,
+    "orderDate": "2026-11-11T19:55:34.9814354+07:00",
+    "status": "Pending"
+  }
+]

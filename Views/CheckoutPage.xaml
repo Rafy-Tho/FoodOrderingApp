@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FoodOrderingApp.Models"
+             xmlns:app="clr-namespace:FoodOrderingApp"
+             xmlns:controls="clr-namespace:FoodOrderingApp.Controls"
+             x:Class="FoodOrderingApp.Views.CheckoutPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="Android" Value="0,28,0,0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <!-- One row in the order summary -->
+            <DataTemplate x:Key="SummaryItemTemplate" x:DataType="models:CartItem">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="0,4">
+                    <Border BackgroundColor="{StaticResource OrangeSoft}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12,12,12,12"
+                            WidthRequest="42" HeightRequest="42"
+                            VerticalOptions="Center">
+                        <Image Source="{Binding Image}" Aspect="AspectFill" />
+                    </Border>
+
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                        <Label Text="{Binding Name}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="13"
+                               TextColor="{StaticResource TextMain}"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation" />
+                        <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}"
+                               FontSize="11"
+                               TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <Label Grid.Column="2"
+                           Text="{Binding TotalPriceText}"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="13"
+                           TextColor="{StaticResource TextMain}"
+                           VerticalOptions="Center" />
+                </Grid>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <controls:PageHeader x:Name="Header"
+                             Grid.Row="0"
+                             Title="Checkout"
+                             Subtitle="Cash on delivery"
+                             ShowBack="True" />
+
+        <ScrollView x:Name="MainScrollView" Grid.Row="1">
+            <VerticalStackLayout Padding="16,6,16,16" Spacing="14">
+
+                <!-- ===== Delivery details ===== -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="14">
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{x:Static app:Icons.LocationDot}"
+                                   FontFamily="FASolid"
+                                   FontSize="13"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Delivery details" Style="{StaticResource SectionTitleStyle}" />
+                        </HorizontalStackLayout>
+
+                        <!-- Name -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Full name" Style="{StaticResource FieldLabelStyle}" />
+                            <Border Style="{StaticResource FieldBorder}">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                    <Label Text="{x:Static app:Icons.User}"
+                                           FontFamily="FASolid"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           VerticalOptions="Center" />
+                                    <Entry x:Name="NameEntry"
+                                           Grid.Column="1"
+                                           Placeholder="e.g. John Smith"
+                                           PlaceholderColor="{StaticResource TextSecondary}"
+                                           TextColor="{StaticResource TextMain}"
+                                           BackgroundColor="Transparent"
+                                           Keyboard="Text"
+                                           MaxLength="60"
+                                           ReturnType="Next"
+                                           TextChanged="OnFieldTextChanged"
+                                           Completed="OnNameCompleted" />
+                                </Grid>
+                            </Border>
+                            <Label x:Name="NameErrorLabel" Style="{StaticResource ErrorLabelStyle}" />
+                        </VerticalStackLayout>
+
+                        <!-- Phone -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Phone number" Style="{StaticResource FieldLabelStyle}" />
+                            <Border Style="{StaticResource FieldBorder}">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                    <Label Text="{x:Static app:Icons.Phone}"
+                                           FontFamily="FASolid"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           VerticalOptions="Center" />
+                                    <Entry x:Name="PhoneEntry"
+                                           Grid.Column="1"
+                                           Placeholder="e.g. 0123456789"
+                                           PlaceholderColor="{StaticResource TextSecondary}"
+                                           TextColor="{StaticResource TextMain}"
+                                           BackgroundColor="Transparent"
+                                           Keyboard="Telephone"
+                                           MaxLength="20"
+                                           ReturnType="Next"
+                                           TextChanged="OnFieldTextChanged"
+                                           Completed="OnPhoneCompleted" />
+                                </Grid>
+                            </Border>
+                            <Label x:Name="PhoneErrorLabel" Style="{StaticResource ErrorLabelStyle}" />
+                        </VerticalStackLayout>
+
+                        <!-- Address -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Delivery address" Style="{StaticResource FieldLabelStyle}" />
+                            <Border Style="{StaticResource FieldBorder}" Padding="12,10">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                    <Label Text="{x:Static app:Icons.LocationDot}"
+                                           FontFamily="FASolid"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           VerticalOptions="Start"
+                                           Margin="0,4,0,0" />
+                                    <Editor x:Name="AddressEditor"
+                                            Grid.Column="1"
+                                            Placeholder="House number, street, area, city..."
+                                            PlaceholderColor="{StaticResource TextSecondary}"
+                                            TextColor="{StaticResource TextMain}"
+                                            BackgroundColor="Transparent"
+                                            AutoSize="TextChanges"
+                                            MinimumHeightRequest="72"
+                                            MaxLength="200"
+                                            TextChanged="OnFieldTextChanged" />
+                                </Grid>
+                            </Border>
+                            <Label x:Name="AddressErrorLabel" Style="{StaticResource ErrorLabelStyle}" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ===== Payment method ===== -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="12">
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{x:Static app:Icons.Wallet}"
+                                   FontFamily="FASolid"
+                                   FontSize="13"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Payment method" Style="{StaticResource SectionTitleStyle}" />
+                        </HorizontalStackLayout>
+
+                        <!-- Only one option, so it is always shown as selected -->
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                Stroke="{StaticResource PrimaryOrange}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16,16,16,16"
+                                Padding="14,12">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Border BackgroundColor="White"
+                                        StrokeThickness="0"
+                                        StrokeShape="Ellipse"
+                                        WidthRequest="40" HeightRequest="40"
+                                        VerticalOptions="Center">
+                                    <Label Text="{x:Static app:Icons.Money}"
+                                           FontFamily="FASolid"
+                                           FontSize="14"
+                                           TextColor="{StaticResource PrimaryOrange}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                    <Label Text="Cash on delivery"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="14" />
+                                    <Label Text="Pay with cash when your food arrives"
+                                           FontSize="11.5"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+
+                                <Label Grid.Column="2"
+                                       Text="{x:Static app:Icons.CheckCircle}"
+                                       FontFamily="FASolid"
+                                       FontSize="18"
+                                       TextColor="{StaticResource PrimaryOrange}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ===== Order summary ===== -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10">
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{x:Static app:Icons.Receipt}"
+                                   FontFamily="FASolid"
+                                   FontSize="13"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Order summary" Style="{StaticResource SectionTitleStyle}" />
+                        </HorizontalStackLayout>
+
+                        <!-- Items are filled from CartService.Items in the code-behind -->
+                        <VerticalStackLayout x:Name="SummaryItemsLayout"
+                                             Spacing="2"
+                                             BindableLayout.ItemTemplate="{StaticResource SummaryItemTemplate}" />
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" Margin="0,4" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Subtotal" FontSize="13"
+                                   TextColor="{StaticResource TextSecondary}" />
+                            <Label x:Name="SubtotalLabel" Grid.Column="1" FontSize="13" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Delivery fee" FontSize="13"
+                                   TextColor="{StaticResource TextSecondary}" />
+                            <Label x:Name="DeliveryFeeLabel" Grid.Column="1" FontSize="13" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Total" FontFamily="OpenSansSemibold" FontSize="17" />
+                            <Label x:Name="TotalLabel" Grid.Column="1"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="19"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ===== Bottom bar with the Place Order button ===== -->
+        <Border Grid.Row="2"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 24,24,0,0"
+                Padding="20,14,20,18">
+            <Button x:Name="PlaceOrderButton"
+                    Style="{StaticResource PrimaryButton}"
+                    Clicked="OnPlaceOrderClicked" />
+        </Border>
+
+    </Grid>
+</ContentPage>

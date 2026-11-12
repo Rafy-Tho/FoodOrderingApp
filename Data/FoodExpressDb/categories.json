@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Burgers",
+    "iconKey": "burgers"
+  },
+  {
+    "name": "Pizza",
+    "iconKey": "pizza"
+  },
+  {
+    "name": "Asian",
+    "iconKey": "asian"
+  },
+  {
+    "name": "Drinks",
+    "iconKey": "drinks"
+  },
+  {
+    "name": "Desserts",
+    "iconKey": "desserts"
+  }
+]

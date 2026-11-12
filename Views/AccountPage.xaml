@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:app="clr-namespace:FoodOrderingApp"
+             xmlns:controls="clr-namespace:FoodOrderingApp.Controls"
+             x:Class="FoodOrderingApp.Views.AccountPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="Android" Value="0,28,0,0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <controls:PageHeader Grid.Row="0"
+                             Title="My account"
+                             Subtitle="Saved on this device"
+                             ShowBack="True" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,6,16,16" Spacing="14">
+
+                <!-- Profile card -->
+                <Border Style="{StaticResource CardStyle}" Padding="18">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                Stroke="{StaticResource PrimaryOrange}"
+                                StrokeThickness="1"
+                                StrokeShape="Ellipse"
+                                WidthRequest="76" HeightRequest="76"
+                                HorizontalOptions="Center">
+                            <Label x:Name="InitialLabel"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="30"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+
+                        <Label x:Name="NameLabel"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="20"
+                               HorizontalOptions="Center"
+                               Margin="0,4,0,0" />
+
+                        <Label x:Name="EmailLabel"
+                               FontSize="12.5"
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Stats -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{x:Static app:Icons.Receipt}"
+                                   FontFamily="FASolid"
+                                   FontSize="14"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                            <Label x:Name="OrdersCountLabel"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="20" />
+                            <Label Text="Orders placed"
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{x:Static app:Icons.Cart}"
+                                   FontFamily="FASolid"
+                                   FontSize="14"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                            <Label x:Name="CartCountLabel"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="20" />
+                            <Label Text="Items in cart"
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Where the data lives -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{x:Static app:Icons.Sliders}"
+                                   FontFamily="FASolid"
+                                   FontSize="13"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Your data"
+                                   Style="{StaticResource SectionTitleStyle}" />
+                        </HorizontalStackLayout>
+
+                        <Label Text="The menu, your account, cart and orders are stored in a SQLite database on this device. Edit Data\FoodExpressDb\foods.json and rebuild to change the menu."
+                               FontSize="11.5"
+                               TextColor="{StaticResource TextSecondary}" />
+
+                        <Border BackgroundColor="#FCF8F4"
+                                Stroke="{StaticResource Line}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12,12,12,12"
+                                Padding="10,8">
+                            <Label x:Name="DataPathLabel"
+                                   FontSize="10"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   LineBreakMode="CharacterWrap" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="Sign out"
+                        Style="{StaticResource SecondaryButton}"
+                        TextColor="{StaticResource Danger}"
+                        BorderColor="{StaticResource Danger}"
+                        Clicked="OnSignOutClicked" />
+
+                <Label Text="Signing out keeps your cart and order history saved."
+                       FontSize="10.5"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

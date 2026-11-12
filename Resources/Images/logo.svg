@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 456 456" width="456" height="456">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF8C42"/>
+      <stop offset="0.55" stop-color="#FF6B35"/>
+      <stop offset="1" stop-color="#E9501F"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="456" height="456" rx="104" fill="url(#brand)"/>
+  <circle cx="228" cy="246" r="150" fill="#FFFFFF" fill-opacity="0.10"/>
+
+  <!-- Steam -->
+  <g stroke="#FFFFFF" stroke-width="17" stroke-linecap="round" fill="none" stroke-opacity="0.95">
+    <path d="M186 198c-15-19 15-33 0-52"/>
+    <path d="M228 198c-15-19 15-33 0-52"/>
+    <path d="M270 198c-15-19 15-33 0-52"/>
+  </g>
+
+  <!-- Sparkle -->
+  <path d="M338 126l6 15 15 6-15 6-6 15-6-15-15-6 15-6z" fill="#FFFFFF" fill-opacity="0.85"/>
+
+  <!-- Bowl -->
+  <rect x="100" y="222" width="256" height="26" rx="13" fill="#FFFFFF"/>
+  <path d="M116 248h224c0 61-50 111-112 111S116 309 116 248Z" fill="#FFFFFF"/>
+  <rect x="196" y="356" width="64" height="14" rx="7" fill="#FFFFFF"/>
+  <path d="M152 268h152" stroke="#FFB59A" stroke-width="8" stroke-linecap="round" stroke-opacity="0.55"/>
+</svg>

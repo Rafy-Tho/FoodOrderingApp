@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:app="clr-namespace:FoodOrderingApp"
+             x:Class="FoodOrderingApp.Views.LoginPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="Android" Value="0,28,0,0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,28,24,24" Spacing="16">
+
+            <!-- Logo -->
+            <Border BackgroundColor="{StaticResource PrimaryOrange}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 26,26,26,26"
+                    WidthRequest="84" HeightRequest="84"
+                    HorizontalOptions="Center">
+                <Image Source="logo.png"
+                       WidthRequest="62" HeightRequest="62"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Welcome back"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="26"
+                       HorizontalOptions="Center" />
+                <Label Text="Sign in to order your favourites, fast."
+                       FontSize="12.5"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- Sign-in form -->
+            <Border Style="{StaticResource CardStyle}" Padding="18">
+                <VerticalStackLayout Spacing="14">
+
+                    <!-- Email -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Email" Style="{StaticResource FieldLabelStyle}" />
+                        <Border Style="{StaticResource FieldBorder}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Label Text="{x:Static app:Icons.Envelope}"
+                                       FontFamily="FASolid"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center" />
+                                <Entry x:Name="EmailEntry"
+                                       Grid.Column="1"
+                                       Placeholder="you@example.com"
+                                       PlaceholderColor="{StaticResource TextSecondary}"
+                                       TextColor="{StaticResource TextMain}"
+                                       BackgroundColor="Transparent"
+                                       Keyboard="Email"
+                                       MaxLength="120"
+                                       ReturnType="Next"
+                                       TextChanged="OnFieldTextChanged"
+                                       Completed="OnEmailCompleted" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Password -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Password" Style="{StaticResource FieldLabelStyle}" />
+                        <Border Style="{StaticResource FieldBorder}">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                <Label Text="{x:Static app:Icons.Lock}"
+                                       FontFamily="FASolid"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center" />
+                                <Entry x:Name="PasswordEntry"
+                                       Grid.Column="1"
+                                       IsPassword="True"
+                                       Placeholder="Your password"
+                                       PlaceholderColor="{StaticResource TextSecondary}"
+                                       TextColor="{StaticResource TextMain}"
+                                       BackgroundColor="Transparent"
+                                       MaxLength="60"
+                                       ReturnType="Go"
+                                       TextChanged="OnFieldTextChanged"
+                                       Completed="OnSignInClicked" />
+                                <Button x:Name="TogglePasswordButton"
+                                        Grid.Column="2"
+                                        Text="{x:Static app:Icons.Eye}"
+                                        Style="{StaticResource GhostIconButton}"
+                                        Clicked="OnTogglePasswordClicked" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Error message -->
+                    <Border x:Name="ErrorBorder"
+                            IsVisible="False"
+                            BackgroundColor="#FFF1F0"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12,12,12,12"
+                            Padding="12,10">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                            <Label Text="{x:Static app:Icons.TriangleExclamation}"
+                                   FontFamily="FASolid"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Danger}"
+                                   VerticalOptions="Start"
+                                   Margin="0,2,0,0" />
+                            <Label x:Name="ErrorLabel"
+                                   Grid.Column="1"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Danger}" />
+                        </Grid>
+                    </Border>
+
+                    <Button x:Name="SignInButton"
+                            Text="Sign in"
+                            Style="{StaticResource PrimaryButton}"
+                            Clicked="OnSignInClicked" />
+
+                    <!-- Demo account shortcut -->
+                    <Border BackgroundColor="{StaticResource OrangeSoft}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14,14,14,14"
+                            Padding="12,10">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnUseDemoTapped" />
+                        </Border.GestureRecognizers>
+
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Try the demo account"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="12"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                            <Label Text="demo@foodexpress.com · demo123  (tap to fill in)"
+                                   FontSize="10.5"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Register link -->
+            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                <Label Text="New to FoodExpress?"
+                       FontSize="12.5"
+                       TextColor="{StaticResource TextSecondary}"
+                       VerticalOptions="Center" />
+                <Label Text="Create an account"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="12.5"
+                       TextColor="{StaticResource PrimaryOrange}"
+                       VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnRegisterTapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+
+            <Label Text="Your account, cart and orders are saved in a local database on this device."
+                   FontSize="10.5"
+                   TextColor="{StaticResource TextSecondary}"
+                   HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

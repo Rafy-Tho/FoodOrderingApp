@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FoodOrderingApp.Models"
+             xmlns:app="clr-namespace:FoodOrderingApp"
+             xmlns:controls="clr-namespace:FoodOrderingApp.Controls"
+             x:Class="FoodOrderingApp.Views.OrderHistoryPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="Android" Value="0,28,0,0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <!-- One food line inside an order card -->
+            <DataTemplate x:Key="OrderItemTemplate" x:DataType="models:OrderItem">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="0,4">
+                    <Border BackgroundColor="{StaticResource OrangeSoft}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12,12,12,12"
+                            WidthRequest="42" HeightRequest="42"
+                            VerticalOptions="Center">
+                        <Image Source="{Binding Image}" Aspect="AspectFill" />
+                    </Border>
+
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                        <Label Text="{Binding FoodName}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="13"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation" />
+                        <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}"
+                               FontSize="11"
+                               TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <Label Grid.Column="2"
+                           Text="{Binding TotalPriceText}"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="13"
+                           VerticalOptions="Center" />
+                </Grid>
+            </DataTemplate>
+
+            <!-- One full order card -->
+            <DataTemplate x:Key="OrderCardTemplate" x:DataType="models:Order">
+                <Border Style="{StaticResource CardStyle}" Margin="16,0,16,12" Padding="16">
+                    <VerticalStackLayout Spacing="12">
+
+                        <!-- Order number, date, status badge -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border BackgroundColor="{StaticResource OrangeSoft}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 14,14,14,14"
+                                    WidthRequest="42" HeightRequest="42"
+                                    VerticalOptions="Start">
+                                <Label Text="{x:Static app:Icons.Receipt}"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       TextColor="{StaticResource PrimaryOrange}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                <Label Text="{Binding OrderIdText}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="15" />
+                                <Label Text="{Binding OrderDateText}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding StatusBackgroundColor}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12,12,12,12"
+                                    Padding="10,4"
+                                    VerticalOptions="Center">
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="{x:Static app:Icons.Clock}"
+                                           FontFamily="FASolid"
+                                           FontSize="9"
+                                           TextColor="{Binding StatusColor}"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding Status}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="10.5"
+                                           TextColor="{Binding StatusColor}" />
+                                </HorizontalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" />
+
+                        <!-- Customer information -->
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Label Text="{x:Static app:Icons.User}"
+                                       FontFamily="FASolid"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding CustomerInfo}"
+                                       FontSize="12.5"
+                                       FontFamily="OpenSansSemibold"
+                                       VerticalOptions="Center" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Label Text="{x:Static app:Icons.LocationDot}"
+                                       FontFamily="FASolid"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Start"
+                                       Margin="0,2,0,0" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding DeliveryAddress}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Label Text="{x:Static app:Icons.Money}"
+                                       FontFamily="FASolid"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding PaymentMethod}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" />
+
+                        <!-- Ordered food items -->
+                        <VerticalStackLayout Spacing="2"
+                                             BindableLayout.ItemsSource="{Binding Items}"
+                                             BindableLayout.ItemTemplate="{StaticResource OrderItemTemplate}" />
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" />
+
+                        <!-- Price breakdown -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Subtotal" FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Subtotal, StringFormat='${0:F2}'}"
+                                   FontSize="12" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Delivery fee" FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding DeliveryFee, StringFormat='${0:F2}'}"
+                                   FontSize="12" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Total" FontFamily="OpenSansSemibold" FontSize="16" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding TotalText}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="18"
+                                   TextColor="{StaticResource PrimaryOrange}" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Line}" />
+
+                        <!-- Update (cancel) / delete this order in the saved file -->
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <Button Text="Cancel order"
+                                    Style="{StaticResource SecondaryButton}"
+                                    FontSize="12"
+                                    HeightRequest="40"
+                                    MinimumHeightRequest="40"
+                                    IsVisible="{Binding CanCancel}"
+                                    Clicked="OnCancelOrderClicked" />
+                            <Button Grid.Column="1"
+                                    Text="{x:Static app:Icons.Trash}"
+                                    Style="{StaticResource GhostIconButton}"
+                                    VerticalOptions="Center"
+                                    Clicked="OnDeleteOrderClicked" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <controls:PageHeader x:Name="Header"
+                             Grid.Row="0"
+                             Title="Order history"
+                             ShowBack="True" />
+
+        <Grid Grid.Row="1">
+
+            <!-- ===== Orders list ===== -->
+            <CollectionView x:Name="OrdersCollection"
+                            IsVisible="False"
+                            SelectionMode="None"
+                            ItemTemplate="{StaticResource OrderCardTemplate}">
+                <CollectionView.Header>
+                    <Label x:Name="OrderSummaryLabel"
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}"
+                           Margin="20,2,16,10" />
+                </CollectionView.Header>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="10" Color="Transparent" />
+                </CollectionView.Footer>
+            </CollectionView>
+
+            <!-- ===== Empty state ===== -->
+            <VerticalStackLayout x:Name="EmptyState"
+                                 IsVisible="False"
+                                 Padding="32"
+                                 Spacing="10"
+                                 VerticalOptions="Center">
+                <Border BackgroundColor="{StaticResource OrangeSoft}"
+                        StrokeThickness="0"
+                        StrokeShape="Ellipse"
+                        WidthRequest="96" HeightRequest="96"
+                        HorizontalOptions="Center">
+                    <Label Text="{x:Static app:Icons.Receipt}"
+                           FontFamily="FASolid"
+                           FontSize="30"
+                           TextColor="{StaticResource PrimaryOrange}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <Label Text="No orders yet"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="20"
+                       HorizontalOptions="Center"
+                       Margin="0,8,0,0" />
+                <Label Text="When you place an order, it will show up here."
+                       FontSize="12.5"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalTextAlignment="Center" />
+                <Button Text="Start ordering"
+                        Style="{StaticResource PrimaryButton}"
+                        HorizontalOptions="Center"
+                        WidthRequest="180"
+                        Margin="0,10,0,0"
+                        Clicked="OnStartOrderingClicked" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+</ContentPage>
